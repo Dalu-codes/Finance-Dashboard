@@ -1,8 +1,6 @@
 # Financial Board
 
-A polished personal finance dashboard — React + TypeScript + Tailwind + Recharts on the frontend, backed by a Spring Boot API.
-
-Originally built as a static HTML dashboard, then ported to a typed React SPA with live charts and a real backend contract, to practice wiring a full frontend against a Java service instead of hardcoded data.
+A personal finance dashboard: React + TypeScript + Tailwind + Recharts on the frontend, backed by a Spring Boot API.
 
 
 
@@ -120,7 +118,5 @@ public class FinanceController {
 cp .env.example .env
 ```
 
-- **Local dev:** leave `VITE_API_BASE_URL` unset. `vite.config.ts` proxies same-origin `/api/**` requests to `VITE_BACKEND_URL` (`http://localhost:8080` by default) — no CORS setup needed while developing against a local Spring Boot app.
-- **Production:** set `VITE_API_BASE_URL` to the deployed backend's origin, e.g. `https://api.yourdomain.com`. Configure CORS on the Spring Boot side to allow the frontend's origin.
 
 </details>
