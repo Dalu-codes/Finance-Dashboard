@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-size: 16px;
+  }
+  body {
+    @apply font-body text-body bg-bg min-h-screen;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading tracking-heading;
+  }
+}
+
+@media print {
+  body {
+    background: white;
+  }
+  .print-avoid-break {
+    break-inside: avoid;
+  }
+}
