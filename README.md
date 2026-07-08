@@ -1,20 +1,26 @@
-# Finance-Dashboard
-Built a polished dashboard UI that consumes data from a Spring Boot backend. 
-=======
-# Financial Board (Personal)
+# Financial Board
 
-React + TypeScript + Tailwind CSS + Recharts port of the original static
-HTML dashboard, wired up to consume JSON from a Spring Boot backend.
+A polished personal finance dashboard — React + TypeScript + Tailwind + Recharts on the frontend, backed by a Spring Boot API.
+
+Originally built as a static HTML dashboard, then ported to a typed React SPA with live charts and a real backend contract, to practice wiring a full frontend against a Java service instead of hardcoded data.
+
+
+
+## Features
+
+- KPI overview (balance, expenses) with responsive card grid
+- Cash flow bar chart with day/week period switching
+- Expense breakdown donut chart by category
+- Investment/savings goal tracking with progress bars
+- Upcoming bills list
+- Graceful fallback to mock data if the backend is unreachable, so the UI is never empty in development
 
 ## Stack
 
 - **React 18 + TypeScript** — Vite-powered SPA
-- **Tailwind CSS** — design tokens (`tailwind.config.js`) map 1:1 to the
-  original CSS custom properties (`--ink`, `--green-lt`, `--blue`, etc.)
-- **Recharts** — replaces Chart.js: `CashFlowChart` (bar chart) and
-  `ExpenseDonut` (pie/donut chart)
-- Fully responsive: 3-column KPI row → 1 column, two-column main grid →
-  stacked, investments/bills grid → stacked, all below `lg`/`sm` breakpoints
+- **Tailwind CSS** — design tokens map 1:1 to the original CSS custom properties
+- **Recharts** — `CashFlowChart` (bar chart) and `ExpenseDonut` (pie/donut chart)
+- Fully responsive down to mobile: 3-column KPI row → 1 column, two-column main grid → stacked
 
 ## Getting started
 
@@ -28,16 +34,37 @@ npm run build      # type-check + production build to dist/
 npm run preview    # preview the production build
 ```
 
-## Connecting to the Spring Boot backend
+## Project structure
 
-The frontend fetches everything from **one endpoint**:
+```
+src/
+  api/financeApi.ts             fetch client for the Spring Boot backend
+  hooks/useFinanceDashboard.ts  data-fetching hook (loading/error/fallback)
+  types/finance.ts               TypeScript types mirroring backend DTOs
+  data/mockData.ts               fallback/dev data
+  utils/format.ts                currency + date formatting helpers
+  components/
+    TopBar.tsx
+    KpiCards.tsx
+    CashFlowChart.tsx            Recharts BarChart + period selector
+    InvestmentPlans.tsx
+    UpcomingBills.tsx
+    ExpenseDonut.tsx              Recharts PieChart (donut)
+    icons.tsx
+  App.tsx
+  main.tsx
+```
+
+<details>
+<summary><strong>Backend integration details (Spring Boot API contract)</strong></summary>
+
+The frontend fetches everything from one endpoint:
 
 ```
 GET /api/finance/dashboard?period=This%20week
 ```
 
-expected to return a JSON body matching `FinanceDashboard` in
-`src/types/finance.ts`:
+Expected response, matching `FinanceDashboard` in `src/types/finance.ts`:
 
 ```jsonc
 {
@@ -45,7 +72,6 @@ expected to return a JSON body matching `FinanceDashboard` in
   "overview": { "overallBalance": 100000000, "totalBalance": 100000000, "totalExpense": 100000000 },
   "cashFlow": [
     { "day": "Monday", "expense": 40000, "savings": 85000 }
-    // ...one entry per day
   ],
   "investments": {
     "totalSavings": 500000,
@@ -66,13 +92,12 @@ expected to return a JSON body matching `FinanceDashboard` in
 }
 ```
 
-Matching Spring Boot record shapes are sketched at the top of
-`src/types/finance.ts`. A minimal controller looks like:
+Minimal Spring Boot controller:
 
 ```java
 @RestController
 @RequestMapping("/api/finance")
-@CrossOrigin(origins = "http://localhost:5173") // or use a global CORS config
+@CrossOrigin(origins = "http://localhost:5173")
 public class FinanceController {
 
     @GetMapping("/dashboard")
@@ -89,49 +114,13 @@ public class FinanceController {
 }
 ```
 
-### Where the wiring lives
-
-- `src/api/financeApi.ts` — thin `fetch` client (`financeApi.getDashboard`,
-  `financeApi.addBill`), base URL from `VITE_API_BASE_URL`
-- `src/hooks/useFinanceDashboard.ts` — loads data on mount / when the cash
-  flow period changes, exposes `isLoading`, `error`, and `isFallback`
-- `src/data/mockData.ts` — local fallback shown automatically if the
-  backend request fails (e.g. backend not running yet), so the UI is never
-  empty during development
-- `App.tsx` shows a small "Showing sample data" banner with a **Retry**
-  button whenever the fallback is active
-
 ### Environment configuration
 
 ```bash
 cp .env.example .env
 ```
 
-- **Local dev:** leave `VITE_API_BASE_URL` unset. `vite.config.ts` proxies
-  same-origin `/api/**` requests to `VITE_BACKEND_URL`
-  (`http://localhost:8080` by default), so there's no CORS setup needed
-  while developing against a local Spring Boot app.
-- **Production:** set `VITE_API_BASE_URL` to the deployed backend's
-  origin, e.g. `https://api.yourdomain.com`. Configure CORS on the Spring
-  Boot side to allow the frontend's origin.
+- **Local dev:** leave `VITE_API_BASE_URL` unset. `vite.config.ts` proxies same-origin `/api/**` requests to `VITE_BACKEND_URL` (`http://localhost:8080` by default) — no CORS setup needed while developing against a local Spring Boot app.
+- **Production:** set `VITE_API_BASE_URL` to the deployed backend's origin, e.g. `https://api.yourdomain.com`. Configure CORS on the Spring Boot side to allow the frontend's origin.
 
-## Project structure
-
-```
-src/
-  api/financeApi.ts          fetch client for the Spring Boot backend
-  hooks/useFinanceDashboard.ts  data-fetching hook (loading/error/fallback)
-  types/finance.ts           TypeScript types mirroring backend DTOs
-  data/mockData.ts           fallback/dev data
-  utils/format.ts            currency + date formatting helpers
-  components/
-    TopBar.tsx
-    KpiCards.tsx
-    CashFlowChart.tsx        Recharts BarChart + period selector
-    InvestmentPlans.tsx
-    UpcomingBills.tsx
-    ExpenseDonut.tsx          Recharts PieChart (donut)
-    icons.tsx
-  App.tsx
-  main.tsx
-```
+</details>
