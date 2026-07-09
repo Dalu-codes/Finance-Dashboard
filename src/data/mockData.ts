@@ -2,8 +2,7 @@ import type { FinanceDashboard } from '@/types/finance'
 
 /**
  * Fallback data used when the Spring Boot backend is unreachable, or during
- * local UI development without the backend running. Mirrors the values from
- * the original static HTML design.
+ * local UI development without the backend running.
  */
 export const mockDashboard: FinanceDashboard = {
   user: {

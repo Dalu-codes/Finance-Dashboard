@@ -1,15 +1,3 @@
-/**
- * Types mirror the JSON shape expected from the Spring Boot backend.
- * Keep these in sync with the corresponding Java DTOs / records, e.g.:
- *
- *   record UserSummaryResponse(String firstName, String role, String avatarInitial) {}
- *   record OverviewResponse(BigDecimal overallBalance, BigDecimal totalBalance, BigDecimal totalExpense) {}
- *   record CashFlowPointResponse(String day, BigDecimal expense, BigDecimal savings) {}
- *   record InvestmentPlanResponse(String id, String name, String icon, BigDecimal current, BigDecimal target) {}
- *   record BillResponse(String id, String name, String dueDate, BigDecimal amount) {}
- *   record ExpenseCategoryResponse(String id, String name, BigDecimal amount, String colorHex) {}
- *   record ExpenseSummaryResponse(BigDecimal total, double percentChangeVsLastWeek, List<ExpenseCategoryResponse> categories) {}
- */
 
 export type CashFlowPeriod = 'This week' | 'This month' | 'This year'
 

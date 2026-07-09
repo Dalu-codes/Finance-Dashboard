@@ -7,7 +7,6 @@ interface UseFinanceDashboardResult {
   data: FinanceDashboard
   isLoading: boolean
   error: string | null
-  /** true when live backend data failed to load and mock data is shown instead */
   isFallback: boolean
   refetch: () => void
 }
